@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import Skill, Student, Teacher, Team, Diploma
-from django.core.exceptions import ValidationError
 from .forms import TeamAdminForm
 
 class SkillAdmin(admin.ModelAdmin):
@@ -9,12 +8,12 @@ class SkillAdmin(admin.ModelAdmin):
 
 class StudentAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email']
-    filter_horizontal = ('skills',)  # Позволяет выбирать несколько скиллов
+    filter_horizontal = ('skills',)
 
 
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email']
-    filter_horizontal = ('skills',)  # Позволяет выбирать несколько скиллов
+    filter_horizontal = ('skills',)
 
 
 class TeamAdmin(admin.ModelAdmin):
@@ -26,7 +25,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 class DiplomaAdmin(admin.ModelAdmin):
     list_display = ['title', 'team', 'teacher']
-    filter_horizontal = ('skills',)  # Позволяет выбрать скиллы для диплома
+    filter_horizontal = ('skills',)
 
 
 admin.site.register(Skill, SkillAdmin)

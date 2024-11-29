@@ -18,8 +18,8 @@ class StudentSerializer(serializers.ModelSerializer):
         read_only_fields = ['first_name', 'last_name', 'email', 'skills', 'team']
 
 class TeacherSerializer(serializers.ModelSerializer):
-    skills = SkillSerializer(many=True)  # Вложенные скиллы, которые у преподавателя
-    teams = serializers.StringRelatedField(many=True)  # Список команд преподавателя
+    skills = SkillSerializer(many=True)
+    teams = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Teacher
@@ -28,8 +28,8 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
-    students = StudentSerializer(many=True)  # Сериализуем студентов команды
-    teacher = TeacherSerializer()  # Сериализуем преподавателя команды
+    students = StudentSerializer(many=True)
+    teacher = TeacherSerializer()
 
     class Meta:
         model = Team
@@ -37,10 +37,8 @@ class TeamSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'name', 'students', 'teacher']
 
     def validate(self, data):
-        # Проверяем количество студентов в команде
         if len(data['students']) > 4:
             raise serializers.ValidationError("Максимальное количество студентов в команде — 4.")
-        # Проверка на количество команд для учителя
         if data['teacher'].teams.count() >= 10:
             raise serializers.ValidationError("Учитель не может вести больше 10 команд.")
         return data
@@ -49,9 +47,9 @@ from rest_framework import serializers
 from .models import Diploma, Skill
 
 class DiplomaSerializer(serializers.ModelSerializer):
-    skills = SkillSerializer(many=True)  # Сериализуем скиллы, связанные с дипломом
-    team = TeamSerializer()  # Сериализуем команду
-    teacher = TeacherSerializer()  # Сериализуем преподавателя
+    skills = SkillSerializer(many=True)
+    team = TeamSerializer()
+    teacher = TeacherSerializer()
 
     class Meta:
         model = Diploma
