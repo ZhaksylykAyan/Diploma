@@ -10,8 +10,6 @@ from .forms import RegisterForm, LoginForm, VerifyOTPForm
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
 
-OTP_STORE = {}
-
 class RegisterView(APIView):
     def get(self, request):
         form = RegisterForm()
