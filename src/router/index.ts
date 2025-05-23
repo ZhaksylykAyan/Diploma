@@ -33,7 +33,7 @@ const routes = [
     name: "StudentPublicProfile",
     component: StudentProfile,
     meta: { requiresAuth: true },
-    props: route => ({ viewedUserId: route.params.id, readonly: true }),
+    props: (route: { params: { id: string } }) => ({ viewedUserId: route.params.id, readonly: true }),
   },
   {
     path: "/orders",
@@ -69,7 +69,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, next) => {
   const authStore = useAuthStore();
   const token = localStorage.getItem("token");
 

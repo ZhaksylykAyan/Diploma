@@ -2,31 +2,31 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useAuthStore } from './auth'
-import apiConfig from "../utils/apiConfig";
+import apiConfig from '../utils/apiConfig'
 
 export const useLikeStore = defineStore('likeStore', {
   state: () => ({
-    likedProjectIds: [],
+    likedProjectIds: [] as (number | string)[],
   }),
 
   actions: {
     async fetchLikes() {
       const authStore = useAuthStore()
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/teams/likes/`, {
+        const res = await axios.get(`${apiConfig.baseURL}/api/teams/likes/`, {
           headers: { Authorization: `Bearer ${authStore.token}` },
         })
-        this.likedProjectIds = res.data.map(like => like.team)
+        this.likedProjectIds = res.data.map((like: {team: number | string}) => like.team)
         localStorage.setItem('likedProjects', JSON.stringify(this.likedProjectIds))
       } catch (err) {
         console.error('Failed to fetch liked projects', err)
       }
     },
 
-    async toggleLike(projectId) {
+    async toggleLike(projectId: number | string) {
       const authStore = useAuthStore()
       try {
-        await axios.post(`http://127.0.0.1:8000/api/teams/likes/toggle/${projectId}/`, {}, {
+        await axios.post(`${apiConfig.baseURL}/api/teams/likes/toggle/${projectId}/`, {}, {
           headers: { Authorization: `Bearer ${authStore.token}` },
         })
         
