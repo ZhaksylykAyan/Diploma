@@ -238,11 +238,11 @@
 import { useRouter, useRoute } from "vue-router";
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import requestIcon from "../../../icons/request.png";
-import { useAuthStore } from "../../../store/auth";
-import { useLikeStore } from "../../../store/likes";
-import { useChatStore } from "../../../store/chat";
-import apiConfig from "../../utils/apiConfig";
+import requestIcon from "@/icons/request.png";
+import { useAuthStore } from "@/store/auth";
+import { useLikeStore } from "@/store/likes";
+import { useChatStore } from "@/store/chat";
+import apiConfig from "@/utils/apiConfig";
 const chatStore = useChatStore();
 const likeStore = useLikeStore();
 const userHasTeam = computed(() => authStore.userHasTeam);
@@ -285,7 +285,7 @@ const imageUrl = computed(() =>
     ? profile.value.photo.startsWith("http")
       ? profile.value.photo
       : `${apiConfig.baseURL}${profile.value.photo}`
-    : new URL("../../../icons/default-avatar.png", import.meta.url).href
+    : new URL("@/icons/default-avatar.png", import.meta.url).href
 );
 
 const selectedSkillsNames = computed(() =>
