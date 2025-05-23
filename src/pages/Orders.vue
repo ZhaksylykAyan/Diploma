@@ -230,7 +230,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useAuthStore } from "../store/auth";
-import apiConfig from "../../utils/apiConfig";
+import apiConfig from "../utils/apiConfig";
 const authStore = useAuthStore();
 const userRole = authStore.user?.role;
 const mySkills = ref([]);

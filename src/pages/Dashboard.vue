@@ -182,7 +182,7 @@ import { useAuthStore } from "../store/auth";
 import { useLikeStore } from "../store/likes";
 import { useRouter, useRoute } from "vue-router";
 import Footer from "../components/Footer/Footer.vue";
-import apiConfig from "../../utils/apiConfig";
+import apiConfig from "../utils/apiConfig";
 const authStore = useAuthStore();
 const likeStore = useLikeStore();
 const isTeamFull = (project) => project?.members?.length >= 4;

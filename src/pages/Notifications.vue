@@ -41,7 +41,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useAuthStore } from "../store/auth";
 import { useNotificationStore } from "../store/notifications";
-import apiConfig from "../../utils/apiConfig";
+import apiConfig from "../utils/apiConfig";
 const notificationStore = useNotificationStore();
 dayjs.extend(relativeTime);
 
