@@ -1,19 +1,19 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore } from "../store/auth";
+import { useAuthStore } from "@/store/auth";
 
 // Page Components
-import Login from "../pages/Login.vue";
-import Register from "../pages/Register.vue";
-import Dashboard from "../pages/Dashboard.vue";
-import Profile from "../pages/Profile.vue";
-import CreateTopic from '../pages/CreateProject.vue';
-import PasswordReset from "../pages/PasswordReset.vue";
-import Orders from "../pages/Orders.vue";
-import StudentProfile from "../components/profiles/students/StudentProfile.vue";
-import SupervisorProfile from "../components/profiles/supervisors/SupervisorProfile.vue";
-import Professors from "../pages/Professors.vue";
-import Notifications from "../pages/Notifications.vue";
-import Likes from "../pages/Likes.vue";
+import Login from "@/pages/Login.vue";
+import Register from "@/pages/Register.vue";
+import Dashboard from "@/pages/Dashboard.vue";
+import Profile from "@/pages/Profile.vue";
+import CreateTopic from '@/pages/CreateProject.vue';
+import PasswordReset from "@/pages/PasswordReset.vue";
+import Orders from "@/pages/Orders.vue";
+import StudentProfile from "@/components/profiles/students/StudentProfile.vue";
+import SupervisorProfile from "@/components/profiles/supervisors/SupervisorProfile.vue";
+import Professors from "@/pages/Professors.vue";
+import Notifications from "@/pages/Notifications.vue";
+import Likes from "@/pages/Likes.vue";
 
 const routes = [
   { path: "/dashboard", component: Dashboard, meta: { requiresAuth: true } },

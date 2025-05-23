@@ -81,9 +81,9 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../../../store/auth";
+import { useAuthStore } from "@/store/auth";
 import axios from "axios";
-import apiConfig from "../../utils/apiConfig";
+import apiConfig from "@/utils/apiConfig";
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -94,7 +94,7 @@ const selectedSkills = ref([]);
 const imageFile = ref(null);
 const imagePreview = ref("");
 const defaultAvatar = new URL(
-  "../../../icons/default-avatar.png",
+  "@/icons/default-avatar.png",
   import.meta.url
 ).href;
 const editing = ref(true); // true by default since it's Edit Profile

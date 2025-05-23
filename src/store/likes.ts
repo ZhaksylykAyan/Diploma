@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useAuthStore } from './auth'
-import apiConfig from '../utils/apiConfig'
+import apiConfig from '@/utils/apiConfig'
 
 export const useLikeStore = defineStore('likeStore', {
   state: () => ({

@@ -5,7 +5,7 @@
   </template>
   
   <script setup>
-  import { useChatStore } from "../../store/chat";
+  import { useChatStore } from "@/store/chat";
   const chatStore = useChatStore();
   
   const toggleChat = () => {

@@ -229,8 +229,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { useAuthStore } from "../store/auth";
-import apiConfig from "../utils/apiConfig";
+import { useAuthStore } from "@/store/auth";
+import apiConfig from "@/utils/apiConfig";
 const authStore = useAuthStore();
 const userRole = authStore.user?.role;
 const mySkills = ref([]);
@@ -247,7 +247,7 @@ const getPhoto = (member) => {
       ? member.photo
       : `${apiConfig.baseURL}${member.photo}`;
   }
-  return new URL("../icons/default-avatar.png", import.meta.url).href;
+  return new URL("@/icons/default-avatar.png", import.meta.url).href;
 };
 
 const fetchRequests = async () => {

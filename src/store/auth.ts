@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { useRouter } from "vue-router";
-import apiConfig from '../utils/apiConfig';
+import apiConfig from '@/utils/apiConfig';
 
 const API_URL = `${apiConfig.baseURL}/api/users/`;
 const PROFILE_URL = `${apiConfig.baseURL}/api/profiles/complete-profile/`;

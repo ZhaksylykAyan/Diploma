@@ -1,7 +1,7 @@
 <template>
   <footer class="footer">
     <div class="footer-left">
-      <img src="../../assets/logo.png" alt="Diplomatch Logo" class="logo" />
+      <img src="@/assets/logo.png" alt="Diplomatch Logo" class="logo" />
       <p class="tagline">Match. Collaborate. Graduate.</p>
       <small>All rights reserved.</small>
     </div>

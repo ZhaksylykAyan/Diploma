@@ -81,11 +81,11 @@ import {
   computed,
   onBeforeUnmount,
 } from "vue";
-import { useChatStore } from "../../store/chat";
-import { useAuthStore } from "../../store/auth";
+import { useChatStore } from "@/store/chat";
+import { useAuthStore } from "@/store/auth";
 import axios from "axios";
 import dayjs from "dayjs";
-import apiConfig from "../../utils/apiConfig";
+import apiConfig from "@/utils/apiConfig";
 const isMobile = ref(false);
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";

@@ -191,11 +191,11 @@
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useAuthStore } from "../../../store/auth";
+import { useAuthStore } from "@/store/auth";
 import axios from "axios";
-import { useLikeStore } from "../../../store/likes";
-import { useChatStore } from "../../../store/chat";
-import apiConfig from "../../utils/apiConfig";
+import { useLikeStore } from "@/store/likes";
+import { useChatStore } from "@/store/chat";
+import apiConfig from "@/utils/apiConfig";
 const chatStore = useChatStore();
 const likeStore = useLikeStore();
 const isViewedSupervisor = computed(() => {
@@ -213,7 +213,7 @@ const isTeamFull = computed(() => {
   return team.value?.members?.length >= 4;
 });
 const defaultAvatar = new URL(
-  "../../../icons/default-avatar.png",
+  "@/icons/default-avatar.png",
   import.meta.url
 ).href;
 const route = useRoute();

@@ -44,15 +44,15 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '../../../store/auth';
+import { useAuthStore } from '@/store/auth';
 import axios from 'axios';
-import apiConfig from "../../utils/apiConfig";
+import apiConfig from "@/utils/apiConfig";
 const authStore = useAuthStore();
 const router = useRouter();
 
 const profile = ref({});
 const defaultAvatar = new URL(
-"../../../icons/default-avatar.png",
+"@/icons/default-avatar.png",
 import.meta.url
 ).href;
 const imageFile = ref(null);

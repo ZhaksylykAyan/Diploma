@@ -178,11 +178,11 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import axios from "axios";
-import { useAuthStore } from "../store/auth";
-import { useLikeStore } from "../store/likes";
+import { useAuthStore } from "@/store/auth";
+import { useLikeStore } from "@/store/likes";
 import { useRouter, useRoute } from "vue-router";
-import Footer from "../components/Footer/Footer.vue";
-import apiConfig from "../utils/apiConfig";
+import Footer from "@/components/Footer/Footer.vue";
+import apiConfig from "@/utils/apiConfig";
 const authStore = useAuthStore();
 const likeStore = useLikeStore();
 const isTeamFull = (project) => project?.members?.length >= 4;

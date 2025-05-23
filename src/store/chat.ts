@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "./auth"; 
 import axios from "axios";
-import apiConfig from '../utils/apiConfig';
+import apiConfig from '@/utils/apiConfig';
 
 interface ChatMessage {
   content: string;

@@ -61,10 +61,10 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../store/auth";
-import { useChatStore } from "../store/chat";
-import ChatIcon  from "../components/Chat/ChatIcon.vue";
-import NotificationBell from "../components/notification/NotificationBell.vue";
+import { useAuthStore } from "@/store/auth";
+import { useChatStore } from "@/store/chat";
+import ChatIcon  from "@/components/Chat/ChatIcon.vue";
+import NotificationBell from "@/components/notification/NotificationBell.vue";
 const router = useRouter();
 const authStore = useAuthStore();
 const userRole = authStore.user?.role;

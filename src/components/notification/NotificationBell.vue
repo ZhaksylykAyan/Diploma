@@ -10,10 +10,10 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import axios from "axios";
-import { useAuthStore } from "../../store/auth";
-import { useNotificationStore } from "../../store/notifications";
+import { useAuthStore } from "@/store/auth";
+import { useNotificationStore } from "@/store/notifications";
 import { useRoute } from "vue-router";
-import apiConfig from "../../utils/apiConfig";
+import apiConfig from "@/utils/apiConfig";
 const route = useRoute();
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();

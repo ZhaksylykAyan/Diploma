@@ -104,9 +104,9 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import { useAuthStore } from "../store/auth";
+import { useAuthStore } from "@/store/auth";
 import { useRouter, useRoute } from "vue-router";
-import apiConfig from "../utils/apiConfig";
+import apiConfig from "@/utils/apiConfig";
 const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();

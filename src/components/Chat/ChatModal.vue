@@ -73,12 +73,12 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
-import { useChatStore } from "../../store/chat";
+import { useChatStore } from "@/store/chat";
 import ChatWindow from "./ChatWindow.vue";
 import axios from "axios";
-import { useAuthStore } from "../../store/auth";
+import { useAuthStore } from "@/store/auth";
 import dayjs from "dayjs"; // если ещё не подключил
-import apiConfig from "../../utils/apiConfig";
+import apiConfig from "@/utils/apiConfig";
 
 const isMobile = ref(false);
 const chatStore = useChatStore();

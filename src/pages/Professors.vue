@@ -51,14 +51,14 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import { useAuthStore } from "../store/auth";
-import apiConfig from "../utils/apiConfig";
+import { useAuthStore } from "@/store/auth";
+import apiConfig from "@/utils/apiConfig";
 const authStore = useAuthStore();
 const professors = ref([]);
 const myProjectSkills = ref([]);
 const isSupervisor = computed(() => authStore.user?.role === "Supervisor");
 const isOwner = ref(false);
-const defaultAvatar = new URL("../icons/default-avatar.png", import.meta.url)
+const defaultAvatar = new URL("@/icons/default-avatar.png", import.meta.url)
   .href;
 
 const calculateCompatibility = (professorSkills) => {
