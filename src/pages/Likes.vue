@@ -78,7 +78,7 @@ import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useAuthStore } from "../store/auth";
 import { useLikeStore } from "../store/likes";
-
+import apiConfig from "../../utils/apiConfig";
 const authStore = useAuthStore();
 const likeStore = useLikeStore();
 const mySkills = ref([]);
@@ -94,7 +94,7 @@ const getPhoto = (person) => {
   if (photoPath) {
     return photoPath.startsWith("http")
       ? photoPath
-      : `http://127.0.0.1:8000${photoPath}`;
+      : `${apiConfig.baseURL}${photoPath}`;
   }
   return new URL("../icons/default-avatar.png", import.meta.url).href;
 };
@@ -103,7 +103,7 @@ const applyToTeam = async (teamId) => {
   if (userHasTeam.value || userHasPendingRequest.value) return;
   try {
     await axios.post(
-      `http://127.0.0.1:8000/api/teams/${teamId}/join/`,
+      `${apiConfig.baseURL}/api/teams/${teamId}/join/`,
       {},
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
@@ -155,12 +155,12 @@ onMounted(async () => {
       await authStore.fetchUser();
     }
 
-    const res = await axios.get("http://127.0.0.1:8000/api/teams/likes/", {
+    const res = await axios.get(`${apiConfig.baseURL}/api/teams/likes/`, {
       headers: { Authorization: `Bearer ${authStore.token}` },
     });
     projects.value = res.data.filter(p => p.status !== 'team_approved');
     const profileRes = await axios.get(
-      "http://127.0.0.1:8000/api/profiles/complete-profile/",
+      `${apiConfig.baseURL}/api/profiles/complete-profile/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }

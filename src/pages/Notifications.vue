@@ -41,7 +41,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useAuthStore } from "../store/auth";
 import { useNotificationStore } from "../store/notifications";
-
+import apiConfig from "../../utils/apiConfig";
 const notificationStore = useNotificationStore();
 dayjs.extend(relativeTime);
 
@@ -51,7 +51,7 @@ const authStore = useAuthStore();
 
 const fetchNotifications = async () => {
   try {
-    const res = await axios.get("http://127.0.0.1:8000/api/notifications/", {
+    const res = await axios.get(`${apiConfig.baseURL}/api/notifications/`, {
       headers: { Authorization: `Bearer ${authStore.token}` },
     });
     notifications.value = res.data;
@@ -73,7 +73,7 @@ const getReason = (msg) => {
 const markAllAsRead = async () => {
   try {
     await axios.patch(
-      "http://127.0.0.1:8000/api/notifications/mark-all-as-read/",
+      `${apiConfig.baseURL}/api/notifications/mark-all-as-read/`,
       {},
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
@@ -92,7 +92,7 @@ onBeforeUnmount(() => {
 
 const deleteNotification = async (id) => {
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/notifications/${id}/`, {
+    await axios.delete(`${apiConfig.baseURL}/api/notifications/${id}/`, {
       headers: { Authorization: `Bearer ${authStore.token}` },
     });
     notifications.value = notifications.value.filter((n) => n.id !== id);

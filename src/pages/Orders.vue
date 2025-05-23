@@ -230,7 +230,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useAuthStore } from "../store/auth";
-
+import apiConfig from "../../utils/apiConfig";
 const authStore = useAuthStore();
 const userRole = authStore.user?.role;
 const mySkills = ref([]);
@@ -245,7 +245,7 @@ const getPhoto = (member) => {
   if (member.photo) {
     return member.photo.startsWith("http")
       ? member.photo
-      : `http://127.0.0.1:8000${member.photo}`;
+      : `${apiConfig.baseURL}${member.photo}`;
   }
   return new URL("../icons/default-avatar.png", import.meta.url).href;
 };
@@ -254,7 +254,7 @@ const fetchRequests = async () => {
   try {
     // ===== Check if user is owner of any team =====
     try {
-      const resTeam = await axios.get("http://127.0.0.1:8000/api/teams/my/", {
+      const resTeam = await axios.get(`${apiConfig.baseURL}/api/teams/my/`, {
         headers: { Authorization: `Bearer ${authStore.token}` },
       });
 
@@ -276,7 +276,7 @@ const fetchRequests = async () => {
     // ===== Student-specific logic =====
     if (userRole === "Student") {
       const res = await axios.get(
-        "http://127.0.0.1:8000/api/teams/my-join-requests/",
+        `${apiConfig.baseURL}/api/teams/my-join-requests/`,
         {
           headers: { Authorization: `Bearer ${authStore.token}` },
         }
@@ -296,7 +296,7 @@ const fetchRequests = async () => {
     // ===== Supervisor-specific logic =====
     if (userRole === "Supervisor") {
       const res = await axios.get(
-        "http://127.0.0.1:8000/api/teams/supervisor-requests/incoming/",
+        `${apiConfig.baseURL}/api/teams/supervisor-requests/incoming/`,
         {
           headers: { Authorization: `Bearer ${authStore.token}` },
         }
@@ -316,7 +316,7 @@ const fetchRequests = async () => {
 const fetchMySupervisorRequest = async () => {
   try {
     const res = await axios.get(
-      "http://127.0.0.1:8000/api/teams/my-supervisor-request/",
+      `${apiConfig.baseURL}/api/teams/my-supervisor-request/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }
@@ -330,7 +330,7 @@ const fetchMySupervisorRequest = async () => {
 const fetchIncomingJoinRequests = async () => {
   try {
     const res = await axios.get(
-      "http://127.0.0.1:8000/api/teams/my-team-join-requests/",
+      `${apiConfig.baseURL}/api/teams/my-team-join-requests/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }
@@ -344,7 +344,7 @@ const fetchIncomingJoinRequests = async () => {
 const cancelSupervisorRequest = async () => {
   try {
     await axios.post(
-      "http://127.0.0.1:8000/api/teams/supervisor-requests/cancel/",
+      `${apiConfig.baseURL}/api/teams/supervisor-requests/cancel/`,
       {},
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
@@ -360,7 +360,7 @@ const cancelSupervisorRequest = async () => {
 const cancelRequest = async (id) => {
   try {
     await axios.delete(
-      `http://127.0.0.1:8000/api/teams/my-join-requests/${id}/`,
+      `${apiConfig.baseURL}/api/teams/my-join-requests/${id}/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }
@@ -377,7 +377,7 @@ const cancelRequest = async (id) => {
 const acceptSupervisorRequest = async (requestId) => {
   try {
     await axios.post(
-      `http://127.0.0.1:8000/api/teams/supervisor-requests/${requestId}/accept/`,
+      `${apiConfig.baseURL}/api/teams/supervisor-requests/${requestId}/accept/`,
       {},
       { headers: { Authorization: `Bearer ${authStore.token}` } }
     );
@@ -390,7 +390,7 @@ const acceptSupervisorRequest = async (requestId) => {
 const rejectSupervisorRequest = async (requestId) => {
   try {
     await axios.post(
-      `http://127.0.0.1:8000/api/teams/supervisor-requests/${requestId}/reject/`,
+      `${apiConfig.baseURL}/api/teams/supervisor-requests/${requestId}/reject/`,
       {},
       { headers: { Authorization: `Bearer ${authStore.token}` } }
     );
@@ -403,7 +403,7 @@ const rejectSupervisorRequest = async (requestId) => {
 const acceptJoinRequest = async (teamId, studentId, req) => {
   try {
     await axios.post(
-      `http://127.0.0.1:8000/api/teams/${teamId}/join-requests/${studentId}/accept/`,
+      `${apiConfig.baseURL}/api/teams/${teamId}/join-requests/${studentId}/accept/`,
       {},
       { headers: { Authorization: `Bearer ${authStore.token}` } }
     );
@@ -417,7 +417,7 @@ const acceptJoinRequest = async (teamId, studentId, req) => {
 const rejectJoinRequest = async (teamId, studentId, req) => {
   try {
     await axios.post(
-      `http://127.0.0.1:8000/api/teams/${teamId}/join-requests/${studentId}/reject/`,
+      `${apiConfig.baseURL}/api/teams/${teamId}/join-requests/${studentId}/reject/`,
       {},
       { headers: { Authorization: `Bearer ${authStore.token}` } }
     );
@@ -514,7 +514,7 @@ const getCompatibilityClass = (requiredSkills, teamMembers) => {
 onMounted(async () => {
   await fetchRequests();
   const res = await axios.get(
-    "http://127.0.0.1:8000/api/profiles/complete-profile/",
+    `${apiConfig.baseURL}/api/profiles/complete-profile/`,
     {
       headers: { Authorization: `Bearer ${authStore.token}` },
     }

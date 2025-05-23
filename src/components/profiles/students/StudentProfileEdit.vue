@@ -83,7 +83,7 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../store/auth";
 import axios from "axios";
-
+import apiConfig from "../../utils/apiConfig";
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -128,7 +128,7 @@ const toggleSkill = (id) => {
 
 const fetchTeam = async () => {
   try {
-    const res = await axios.get("http://127.0.0.1:8000/api/teams/my/", {
+    const res = await axios.get(`${apiConfig.baseURL}/api/teams/my/`, {
       headers: { Authorization: `Bearer ${authStore.token}` },
     });
     team.value = res.data;
@@ -140,7 +140,7 @@ const fetchTeam = async () => {
 onMounted(async () => {
   try {
     const skillsRes = await axios.get(
-      "http://127.0.0.1:8000/api/profiles/skills/",
+      `${apiConfig.baseURL}/api/profiles/skills/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }
@@ -149,7 +149,7 @@ onMounted(async () => {
     skills.value = skillsRes.data;
 
     const profileRes = await axios.get(
-      "http://127.0.0.1:8000/api/profiles/complete-profile/",
+      `${apiConfig.baseURL}/api/profiles/complete-profile/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }
@@ -160,7 +160,7 @@ onMounted(async () => {
     if (profile.value.photo) {
       imagePreview.value = profile.value.photo.startsWith("http")
         ? profile.value.photo
-        : `http://127.0.0.1:8000${profile.value.photo}`;
+        : `${apiConfig.baseURL}${profile.value.photo}`;
     }
   } catch (err) {
     console.error("Error loading profile");
@@ -180,7 +180,7 @@ const saveProfile = async () => {
     formData.append("user", authStore.user.id);
 
     await axios.put(
-      "http://127.0.0.1:8000/api/profiles/complete-profile/",
+      `${apiConfig.baseURL}/api/profiles/complete-profile/`,
       formData,
       {
         headers: {

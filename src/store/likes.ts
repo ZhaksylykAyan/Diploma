@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useAuthStore } from './auth'
+import apiConfig from "../utils/apiConfig";
 
 export const useLikeStore = defineStore('likeStore', {
   state: () => ({
@@ -12,7 +13,7 @@ export const useLikeStore = defineStore('likeStore', {
     async fetchLikes() {
       const authStore = useAuthStore()
       try {
-        const res = await axios.get('http://127.0.0.1:8000/api/teams/likes/', {
+        const res = await axios.get(`http://127.0.0.1:8000/api/teams/likes/`, {
           headers: { Authorization: `Bearer ${authStore.token}` },
         })
         this.likedProjectIds = res.data.map(like => like.team)

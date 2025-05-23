@@ -97,7 +97,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../store/auth";
 import axios from "axios";
-
+import apiConfig from "../../utils/apiConfig";
 const router = useRouter();
 const authStore = useAuthStore();
 const user = authStore.user;
@@ -158,7 +158,7 @@ const updateProfile = async () => {
     }
 
     await axios.put(
-      "http://127.0.0.1:8000/api/profiles/complete-profile/",
+      `${apiConfig.baseURL}/api/profiles/complete-profile/`,
       formData,
       {
         headers: {
@@ -183,7 +183,7 @@ const cancelEdit = () => {
 onMounted(async () => {
   try {
     const profileRes = await axios.get(
-      "http://127.0.0.1:8000/api/profiles/complete-profile/",
+      `${apiConfig.baseURL}/api/profiles/complete-profile/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }
@@ -194,11 +194,11 @@ onMounted(async () => {
     if (profile.value.photo) {
       imagePreview.value = profile.value.photo.startsWith("http")
         ? profile.value.photo
-        : `http://127.0.0.1:8000${profile.value.photo}`;
+        : `${apiConfig.baseURL}${profile.value.photo}`;
     }
 
     const skillsRes = await axios.get(
-      "http://127.0.0.1:8000/api/profiles/skills/",
+      `${apiConfig.baseURL}/api/profiles/skills/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }

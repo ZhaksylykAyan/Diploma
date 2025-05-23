@@ -182,7 +182,7 @@ import { useAuthStore } from "../store/auth";
 import { useLikeStore } from "../store/likes";
 import { useRouter, useRoute } from "vue-router";
 import Footer from "../components/Footer/Footer.vue";
-
+import apiConfig from "../../utils/apiConfig";
 const authStore = useAuthStore();
 const likeStore = useLikeStore();
 const isTeamFull = (project) => project?.members?.length >= 4;
@@ -269,7 +269,7 @@ const openReturnModal = (projectId) => {
 const submitReturn = async () => {
   try {
     await axios.post(
-      `http://127.0.0.1:8000/api/teams/${selectedProjectId.value}/return-comment/`,
+      `${apiConfig.baseURL}/api/teams/${selectedProjectId.value}/return-comment/`,
       { comment: returnComment.value },
       {
         headers: {
@@ -291,7 +291,7 @@ const getPhoto = (person) => {
   if (photoPath) {
     return photoPath.startsWith("http")
       ? photoPath
-      : `http://127.0.0.1:8000${photoPath}`;
+      : `${apiConfig.baseURL}${photoPath}`;
   }
   return new URL("../icons/default-avatar.png", import.meta.url).href;
 };
@@ -310,7 +310,7 @@ const applyToTeam = async (teamId) => {
   if (userHasTeam.value || userHasPendingRequest.value) return;
   try {
     await axios.post(
-      `http://127.0.0.1:8000/api/teams/${teamId}/join/`,
+      `${apiConfig.baseURL}/api/teams/${teamId}/join/`,
       {},
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
@@ -326,7 +326,7 @@ const applyToTeam = async (teamId) => {
 const downloadExcel = async () => {
   try {
     const res = await axios.get(
-      "http://127.0.0.1:8000/api/teams/export-excel/",
+      `${apiConfig.baseURL}/api/teams/export-excel/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
         responseType: "blob",
@@ -353,9 +353,9 @@ onMounted(async () => {
     if (!user?.is_profile_completed) showModal.value = true;
     await likeStore.fetchLikes();
     await authStore.refreshTeamAndRequestStatus();
-    let endpoint = "http://127.0.0.1:8000/api/teams/";
+    let endpoint = `${apiConfig.baseURL}/api/teams/`;
     if (user?.role === "Dean Office") {
-      endpoint = "http://127.0.0.1:8000/api/teams/approved/";
+      endpoint = `${apiConfig.baseURL}/api/teams/approved/`;
     }
 
     const res = await axios.get(endpoint, {
@@ -365,7 +365,7 @@ onMounted(async () => {
       ? res.data // декан видит всё
       : res.data.filter((p) => p.status !== "team_approved");
     const profileRes = await axios.get(
-      "http://127.0.0.1:8000/api/profiles/complete-profile/",
+      `${apiConfig.baseURL}/api/profiles/complete-profile/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }

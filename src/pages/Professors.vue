@@ -52,7 +52,7 @@
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useAuthStore } from "../store/auth";
-
+import apiConfig from "../../utils/apiConfig";
 const authStore = useAuthStore();
 const professors = ref([]);
 const myProjectSkills = ref([]);
@@ -92,7 +92,7 @@ const getSkillColorClass = (skill) => {
 const fetchProfessors = async () => {
   try {
     const res = await axios.get(
-      "http://127.0.0.1:8000/api/profiles/supervisors/",
+      `${apiConfig.baseURL}/api/profiles/supervisors/`,
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }
@@ -109,7 +109,7 @@ const fetchProfessors = async () => {
 // Проверить, является ли текущий пользователь owner команды
 const fetchTeamData = async () => {
   try {
-    const res = await axios.get("http://127.0.0.1:8000/api/teams/my/", {
+    const res = await axios.get(`${apiConfig.baseURL}/api/teams/my/`, {
       headers: { Authorization: `Bearer ${authStore.token}` },
     });
 
@@ -134,7 +134,7 @@ const getPhoto = (prof) => {
   if (prof.photo) {
     return prof.photo.startsWith("http")
       ? prof.photo
-      : `http://127.0.0.1:8000${prof.photo}`;
+      : `${apiConfig.baseURL}${prof.photo}`;
   }
   return defaultAvatar;
 };
@@ -142,7 +142,7 @@ const getPhoto = (prof) => {
 const sendRequest = async (supervisorId) => {
   try {
     await axios.post(
-      `http://127.0.0.1:8000/api/teams/supervisor-request/${supervisorId}/`,
+      `${apiConfig.baseURL}/api/teams/supervisor-request/${supervisorId}/`,
       {},
       {
         headers: { Authorization: `Bearer ${authStore.token}` },

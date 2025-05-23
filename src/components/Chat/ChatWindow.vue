@@ -85,6 +85,7 @@ import { useChatStore } from "../../store/chat";
 import { useAuthStore } from "../../store/auth";
 import axios from "axios";
 import dayjs from "dayjs";
+import apiConfig from "../../utils/apiConfig";
 const isMobile = ref(false);
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -144,7 +145,7 @@ const otherUserFullName = computed(() => {
 const otherUserPhoto = computed(() => {
   if (!otherUser.value) return null;
   if (otherUser.value.profile?.photo) {
-    return `http://127.0.0.1:8000${otherUser.value.profile.photo}`;
+    return `${apiConfig.baseURL}${otherUser.value.profile.photo}`;
   }
   return null;
 });
@@ -197,7 +198,7 @@ const fetchUserStatus = async () => {
   if (userId) {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/users/${userId}/status/`
+        `${apiConfig.baseURL}/api/users/${userId}/status/`
       );
       isOnline.value = res.data.is_online;
       lastSeen.value = res.data.last_seen;
@@ -268,7 +269,7 @@ const sendMessage = async () => {
 
   try {
     await axios.post(
-      `http://127.0.0.1:8000/api/chats/${chatStore.activeChatId}/messages/`,
+      `${apiConfig.baseURL}/api/chats/${chatStore.activeChatId}/messages/`,
       { content: messageContent },
       {
         headers: { Authorization: `Bearer ${authStore.token}` },
