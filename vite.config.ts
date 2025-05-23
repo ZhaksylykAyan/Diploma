@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
     plugins: [vue()],
     define: {
       'process.env': env,
-      'import.meta.env.VUE_APP_API_URL': JSON.stringify(env.VUE_APP_API_URL || 'https://backend-2n093.kinsta.app'),
+      'import.meta.env.VUE_APP_API_URL': JSON.stringify(env.VUE_APP_API_URL || 'https://diplomatch-tiizx.kinsta.app'),
     },
   }
 })
