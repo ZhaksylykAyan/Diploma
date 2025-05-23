@@ -97,13 +97,14 @@ router.beforeEach(async (to, _from, next) => {
   }
 
   // Redirect to profile completion page if profile is not completed
-  if (
-    authStore.user &&
-    !authStore.user.is_profile_completed &&
-    to.path !== "/profile"
-  ) {
-    return next("/profile");
-  }
+  // if (
+  //   authStore.user &&
+  //   !authStore.user.is_profile_completed &&
+  //   to.path !== "/profile"
+  // ) 
+  // {
+  //   return next("/profile");
+  // }
 
   return next(); // Allow navigation
 });
