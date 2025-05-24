@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { useRouter } from "vue-router";
-import apiConfig from '@/utils/apiConfig';
+import apiConfig from "@/utils/apiConfig";
 
 const API_URL = `${apiConfig.baseURL}/api/users/`;
 const PROFILE_URL = `${apiConfig.baseURL}/api/profiles/complete-profile/`;
@@ -76,29 +76,32 @@ export const useAuthStore = defineStore("auth", {
     async login(email: string, password: string) {
       this.isLoggingIn = true;
       try {
-        const response = await axios.post(`${API_URL}login/`, { email, password });
-    
+        const response = await axios.post(`${API_URL}login/`, {
+          email,
+          password,
+        });
+
         if (!response.data.access) throw new Error("Access token missing");
-    
+
         this.token = response.data.access;
         localStorage.setItem("token", this.token);
-    
+
         const userResponse = await axios.get(`${API_URL}me/`, {
           headers: { Authorization: `Bearer ${this.token}` },
         });
-    
+
         this.user = userResponse.data;
         await this.fetchFullProfile();
-    
+
         return { success: true };
       } catch (error: any) {
         this.token = "";
         localStorage.removeItem("token");
-    
+
         // Добавляем обработку блокировки
         const responseData = error?.response?.data || {};
         const message = responseData?.detail || "Login failed";
-    
+
         throw {
           success: false,
           message,
@@ -108,9 +111,8 @@ export const useAuthStore = defineStore("auth", {
       } finally {
         this.isLoggingIn = false;
       }
-    },    
-    
-    
+    },
+
     async fetchTeamStatus() {
       try {
         const res = await axios.get(`${apiConfig.baseURL}/api/teams/my/`, {
@@ -180,11 +182,11 @@ export const useAuthStore = defineStore("auth", {
     },
     async restoreUser() {
       const token = localStorage.getItem("token");
-    
+
       if (!token || this.user) return; // 🛡 уже восстановлен
-    
+
       this.token = token;
-    
+
       try {
         const response = await axios.get(`${API_URL}me/`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -199,30 +201,30 @@ export const useAuthStore = defineStore("auth", {
 
     async logout() {
       try {
-        // отправляем logout-запрос на бэкенд
-        await axios.post(
-          `${API_URL}logout/`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-          }
-        );
+        if (this.token) {
+          await axios.post(
+            `${API_URL}logout/`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${this.token}`,
+              },
+            }
+          );
+        }
       } catch (error) {
         console.warn("Logout on server failed or already logged out:", error);
       }
-    
+
       // локальная очистка токена
       this.user = null;
       this.token = "";
       localStorage.removeItem("token");
-    
-      // редирект по желанию
+
+      // редирект
       const router = useRouter();
       router.push("/login");
     },
-    
 
     async requestPasswordReset(email: string) {
       try {
