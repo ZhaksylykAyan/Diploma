@@ -13,7 +13,7 @@
         to="/professors"
         class="nav-item"
       >
-        Professors
+        Supervisors
       </router-link>
       <router-link to="/dashboard" class="nav-item">Projects</router-link>
       <router-link to="/orders" class="nav-item">Requests</router-link>
@@ -46,7 +46,7 @@
         to="/professors"
         @click="closeMenu"
       >
-        Professors
+        Supervisors
       </router-link>
       <router-link to="/profile" @click="closeMenu">Profile</router-link>
       <router-link to="/dashboard" @click="closeMenu">Projects</router-link>

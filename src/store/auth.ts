@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import apiConfig from "@/utils/apiConfig";
+import router from "@/router";
 
 const API_URL = `${apiConfig.baseURL}/api/users/`;
 const PROFILE_URL = `${apiConfig.baseURL}/api/profiles/complete-profile/`;
@@ -222,10 +223,8 @@ export const useAuthStore = defineStore("auth", {
       localStorage.removeItem("token");
 
       // редирект
-      const router = useRouter();
-      router.push("/login");
+      router.push("/login"); // ✅ теперь это работает правильно
     },
-
     async requestPasswordReset(email: string) {
       try {
         await axios.post(`${API_URL}forgot-password/`, { email });
