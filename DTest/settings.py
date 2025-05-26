@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-9%usa4!4*lxnn57((lwf)5ed=z_pfo%qs2d69a32v36ha-xq(m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False')
+DEBUG = os.getenv('DEBUG', 'False').lower() in ['true', '1', 'yes']
 
 ALLOWED_HOSTS = ['*']
 FRONTEND_URL = os.getenv("FRONTEND_URL", 'http://localhost:5173')
