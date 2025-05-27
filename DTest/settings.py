@@ -172,14 +172,15 @@ USE_I18N = True
 USE_TZ = True
 
 # Email
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
-EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")  # or your actual SMTP provider
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() in ["true", "1"]
-EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False").lower() in ["true", "1"]
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+
+# Дополнительно — можно убрать
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+SENDGRID_ECHO_TO_STDOUT = True
+
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "ayanjkeewow@gmail.com")
 
 
 # Static files (CSS, JavaScript, Images)
