@@ -60,15 +60,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    FRONTEND_URL,
-    BACKEND_URL,
-]
+CORS_ALLOWED_ORIGINS = list(filter(None, [FRONTEND_URL, BACKEND_URL]))
 
-CSRF_TRUSTED_ORIGINS = [ 
-    FRONTEND_URL,
-    BACKEND_URL,
-]
+
+CSRF_TRUSTED_ORIGINS = list(filter(None, [FRONTEND_URL, BACKEND_URL]))
 
 # И если ты используешь fetch/axios с credentials (куки), тогда:
 CORS_ALLOW_CREDENTIALS = True
