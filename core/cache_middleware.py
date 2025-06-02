@@ -8,7 +8,10 @@ class GlobalCacheMiddleware:
 
     def __call__(self, request):
         # Не кэшируем статику и админку
-        if request.path.startswith('/static/') or request.path.startswith('/admin/static/'):
+        if request.path.startswith((
+    '/static/', '/admin/', '/media/', '/swagger/', '/redoc/', '/favicon',
+    '/api/users/me/',       # ⚠️ КРИТИЧЕСКОЕ
+)):
             return self.get_response(request)
         
         # Только GET-запросы
