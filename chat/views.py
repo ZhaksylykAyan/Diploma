@@ -53,7 +53,7 @@ class MarkMessageReadView(APIView):
 
 class UserStatusView(APIView):
     def get(self, request, user_id):
-        status = get_object_or_404(UserStatus, user__id=user_id)
+        status, created = UserStatus.objects.get_or_create(user_id=user_id)
         serializer = UserStatusSerializer(status)
         data = serializer.data
 
