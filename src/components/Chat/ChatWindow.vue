@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <form @submit.prevent="sendMessage" class="chat-input">
+    <form @submit.prevent="sendMessage" class="chat-input fixed-input">
       <input
         v-model="newMessage"
         @input="sendTyping"
@@ -366,6 +366,20 @@ watch(
   display: flex;
   flex-direction: column;
   height: 100dvh;
+  position: relative;
+  z-index: 1;
+}
+.fixed-input {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  background: white;
+  z-index: 100;
+  display: flex;
+  gap: 10px;
 }
 .chat-header {
   padding: 12px;
@@ -385,6 +399,7 @@ watch(
   padding: 10px;
   background: #f9f9f9;
   display: flex;
+  padding-bottom: 70px;
   flex-direction: column;
   gap: 8px;
   min-height: 0; /* ❗ ВАЖНО, позволяет flex: 1 работать как надо */
