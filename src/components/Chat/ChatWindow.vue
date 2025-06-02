@@ -265,9 +265,27 @@ const connectWebSocket = () => {
 const sendMessage = async () => {
   if (!newMessage.value || !ws.value) return;
   const messageContent = newMessage.value;
-  ws.value.send(JSON.stringify({ message: messageContent }));
+
+  // Локально добавляем в чат сразу
+  const localMessage = {
+    content: messageContent,
+    sender: { email: authStore.user.email },
+    timestamp: new Date().toISOString(),
+    is_read: true,
+  };
+  chatStore.addMessage(chatStore.activeChatId, localMessage);
+  chatStore.setLastMessage(chatStore.activeChatId, {
+    content: messageContent,
+    timestamp: localMessage.timestamp,
+  });
+
+  scrollToBottom(true);
 
   try {
+    // Отправка через WebSocket
+    ws.value.send(JSON.stringify({ message: messageContent }));
+
+    // Отправка на сервер
     await axios.post(
       `${apiConfig.baseURL}/api/chats/${chatStore.activeChatId}/messages/`,
       { content: messageContent },
@@ -275,17 +293,14 @@ const sendMessage = async () => {
         headers: { Authorization: `Bearer ${authStore.token}` },
       }
     );
-    await chatStore.fetchMessages(chatStore.activeChatId);
-    chatStore.setLastMessage(chatStore.activeChatId, {
-      content: messageContent,
-      timestamp: new Date().toISOString(),
-    });
   } catch (err) {
-    console.error("Failed to save message", err);
+    console.error("Failed to send message", err);
+    // можно показать уведомление
   }
 
   newMessage.value = "";
 };
+
 
 const sortedMessages = computed(() => {
   const messages = chatStore.chatMessagesByChatId[chatStore.activeChatId] || [];
