@@ -366,7 +366,6 @@ watch(
   display: flex;
   flex-direction: column;
   height: 100dvh;
-  
 }
 .chat-header {
   padding: 12px;
@@ -428,6 +427,7 @@ watch(
   gap: 10px;
   padding: 10px;
   border-top: 1px solid #ccc;
+  flex-shrink: 0;
 }
 .chat-input input {
   flex: 1;
