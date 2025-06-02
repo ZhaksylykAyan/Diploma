@@ -343,9 +343,12 @@ onBeforeUnmount(() => {
 
 .chat-right {
   flex: 1;
-  padding: 16px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
+
 .chat-right.empty {
   display: flex;
   justify-content: center;

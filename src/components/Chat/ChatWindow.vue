@@ -365,7 +365,7 @@ watch(
 .chat-window {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: 100%;
   position: relative;
   z-index: 1;
 }
@@ -521,10 +521,16 @@ watch(
     left: 0;
     right: 0;
     z-index: 10;
+    background: white;
   }
 
   .chat-messages {
-    padding-bottom: 70px; /* оставляем место под input */
+    padding-bottom: 70px;
+  }
+
+  .chat-window {
+    height: 100dvh; /* Только на мобилке */
   }
 }
+
 </style>
