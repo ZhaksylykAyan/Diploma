@@ -11,8 +11,9 @@ class GlobalCacheMiddleware:
         if request.method != 'GET':
             return self.get_response(request)
 
+        
         # Не кэшировать если пользователь авторизован
-        if request.user.is_authenticated:
+        if hasattr(request, 'user') and request.user.is_authenticated:
             return self.get_response(request)
 
         # Уникальный ключ по URL + query params
