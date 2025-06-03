@@ -102,6 +102,15 @@
   gap: 16px;
   font-size: 20px;
 }
+.icons a {
+  color: white;
+  text-decoration: none;
+  transition: transform 0.3s;
+}
+
+.icons a:hover {
+  transform: scale(1.2);
+}
 
 @media (max-width: 768px) {
   .footer {
