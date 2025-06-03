@@ -18,9 +18,23 @@
     <div class="footer-right">
       <p>We are on social media:</p>
       <div class="icons">
-        <i class="fa-brands fa-instagram"></i>
-        <i class="fa-brands fa-telegram"></i>
-        <i class="fa-solid fa-envelope"></i>
+        <a
+          href="https://www.instagram.com/diplomatch.kz/"
+          target="_blank"
+          aria-label="Instagram"
+        >
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+        <a
+          href="https://t.me/diplomatch_kz"
+          target="_blank"
+          aria-label="Telegram"
+        >
+          <i class="fa-brands fa-telegram"></i>
+        </a>
+        <a href="mailto:aminekka603@gmail.com" aria-label="Email">
+          <i class="fa-solid fa-envelope"></i>
+        </a>
       </div>
     </div>
   </footer>

@@ -14,6 +14,7 @@ import SupervisorProfile from "@/components/profiles/supervisors/SupervisorProfi
 import Professors from "@/pages/Professors.vue";
 import Notifications from "@/pages/Notifications.vue";
 import Likes from "@/pages/Likes.vue";
+import About from "@/pages/About.vue";
 
 const routes = [
   { path: "/dashboard", component: Dashboard, meta: { requiresAuth: true } },
@@ -61,6 +62,11 @@ const routes = [
     path: "/liked",
     name: 'Liked',
     component: Likes,
+  },
+  {
+    path: "/about",
+    name: "About",
+    component: About
   },
 ];
 
