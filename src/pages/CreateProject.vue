@@ -38,6 +38,25 @@
           :readonly="isDean"
           required
         ></textarea>
+        
+        <button
+          v-if="!isDean"
+          type="button"
+          class="ai-enhance-btn"
+          @click="enhanceDescription"
+          :disabled="isEnhancing || !project.description.trim() || project.description.trim().length < 10 || aiEnhanceAttempts >= MAX_AI_ATTEMPTS"
+          :title="aiEnhanceAttempts >= MAX_AI_ATTEMPTS ? 'AI enhancement limit reached' : (isEnhancing ? 'Enhancing all 3 titles + description...' : `Enhance all 3 titles and description with AI (${MAX_AI_ATTEMPTS - aiEnhanceAttempts} left)`)"
+        >
+          <span class="btn-content">
+            <span class="stars">✨</span>
+            {{ isEnhancing ? 'Enhancing All...' : 'Enhance with AI' }}
+            <span class="counter">({{ MAX_AI_ATTEMPTS - aiEnhanceAttempts }}/{{ MAX_AI_ATTEMPTS }})</span>
+          </span>
+        </button>
+        
+        <div v-if="!isDean && aiEnhanceAttempts >= MAX_AI_ATTEMPTS" class="limit-warning">
+          ⚠️ AI enhancement limit reached ({{ MAX_AI_ATTEMPTS }}/{{ MAX_AI_ATTEMPTS }})
+        </div>
         <div v-if="!isDean">
           <h3 class="skill-title">Choose skills you need:</h3>
           <div class="skills-grid">
@@ -123,6 +142,9 @@ const isSupervisor = ref(currentUser?.role === "Supervisor");
 const allSkills = ref([]);
 const selectedSkills = ref([]);
 const projectId = ref(null);
+const isEnhancing = ref(false);
+const aiEnhanceAttempts = ref(0);
+const MAX_AI_ATTEMPTS = 3;
 const getPhoto = (member) => {
   const photo = member.photo || member.user?.photo;
   if (!photo) {
@@ -223,6 +245,109 @@ const toggleSkill = (id) => {
       return;
     }
     selectedSkills.value.push(id);
+  }
+};
+
+// AI Enhancement
+const enhanceDescription = async () => {
+  // Check if user has exceeded the limit
+  if (aiEnhanceAttempts.value >= MAX_AI_ATTEMPTS) {
+    alert(`You have reached the maximum limit of ${MAX_AI_ATTEMPTS} AI enhancement attempts for this session.`);
+    return;
+  }
+
+  const trimmedDescription = project.value.description.trim();
+  
+  // Validate description length
+  if (!trimmedDescription) {
+    alert("Please enter a description first.");
+    return;
+  }
+  
+  if (trimmedDescription.length < 10) {
+    alert("Description must be at least 10 characters long for AI enhancement.");
+    return;
+  }
+  
+  if (trimmedDescription.length > 5000) {
+    alert("Description is too long (max 5000 characters).");
+    return;
+  }
+
+  // Validate title lengths (optional fields, but if provided must be <= 500 chars)
+  const trimmedTitleEn = project.value.title?.trim() || '';
+  const trimmedTitleKz = project.value.title_kz?.trim() || '';
+  const trimmedTitleRu = project.value.title_ru?.trim() || '';
+
+  if (trimmedTitleEn.length > 500) {
+    alert("English title is too long (max 500 characters).");
+    return;
+  }
+  if (trimmedTitleKz.length > 500) {
+    alert("Kazakh title is too long (max 500 characters).");
+    return;
+  }
+  if (trimmedTitleRu.length > 500) {
+    alert("Russian title is too long (max 500 characters).");
+    return;
+  }
+
+  isEnhancing.value = true;
+
+  try {
+    // Prepare payload with description and optional titles in all 3 languages
+    const payload = {
+      description: trimmedDescription,
+      // Send titles only if they exist (all are optional)
+      ...(trimmedTitleEn && { title_en: trimmedTitleEn }),
+      ...(trimmedTitleKz && { title_kz: trimmedTitleKz }),
+      ...(trimmedTitleRu && { title_ru: trimmedTitleRu }),
+    };
+
+    const response = await axios.post(
+      `${apiConfig.baseURL}/api/topics/enhance-description/`,
+      payload,
+      {
+        headers: { Authorization: `Bearer ${authStore.token}` },
+      }
+    );
+
+    if (response.data) {
+      // Update all 4 fields with AI-enhanced content
+      if (response.data.enhanced_title_en) {
+        project.value.title = response.data.enhanced_title_en;
+      }
+      if (response.data.enhanced_title_kz) {
+        project.value.title_kz = response.data.enhanced_title_kz;
+      }
+      if (response.data.enhanced_title_ru) {
+        project.value.title_ru = response.data.enhanced_title_ru;
+      }
+      if (response.data.enhanced_description) {
+        project.value.description = response.data.enhanced_description;
+      }
+
+      aiEnhanceAttempts.value++; // Increment counter on success
+      
+      const remainingAttempts = MAX_AI_ATTEMPTS - aiEnhanceAttempts.value;
+      console.log(`✅ AI enhanced all 3 titles and description! ${remainingAttempts} attempts remaining.`);
+    } else {
+      alert("AI enhancement completed but no response received.");
+    }
+  } catch (err) {
+    console.error("Failed to enhance content", err.response?.data || err);
+    
+    // Handle different error types
+    if (err.response?.status === 401) {
+      alert("Authentication failed. Please log in again.");
+      router.push("/login");
+    } else if (err.response?.data?.error) {
+      alert(err.response.data.error);
+    } else {
+      alert("Failed to enhance content. Please try again.");
+    }
+  } finally {
+    isEnhancing.value = false;
   }
 };
 
@@ -343,7 +468,89 @@ h2 {
 }
 
 .form-textarea {
-  height: 100px;
+  height: 200px;
+  resize: vertical; /* Allow users to resize vertically if needed */
+  min-height: 150px;
+  max-height: 500px;
+}
+
+.ai-enhance-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+  background-size: 200% 200%;
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  margin-bottom: 15px;
+  position: relative;
+  overflow: hidden;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.ai-enhance-btn .btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.ai-enhance-btn .stars {
+  font-size: 18px;
+}
+
+.ai-enhance-btn .counter {
+  font-size: 13px;
+  opacity: 0.9;
+  font-weight: 600;
+}
+
+.ai-enhance-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.ai-enhance-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.ai-enhance-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  animation: none;
+  background: linear-gradient(135deg, #999 0%, #666 100%);
+}
+
+.limit-warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 500;
 }
 
 .skill-title {
