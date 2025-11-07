@@ -44,19 +44,26 @@
           type="button"
           class="ai-enhance-btn"
           @click="enhanceDescription"
-          :disabled="isEnhancing || !project.description.trim() || project.description.trim().length < 10 || aiEnhanceAttempts >= MAX_AI_ATTEMPTS"
-          :title="aiEnhanceAttempts >= MAX_AI_ATTEMPTS ? 'AI enhancement limit reached' : (isEnhancing ? 'Enhancing all 3 titles + description...' : `Enhance all 3 titles and description with AI (${MAX_AI_ATTEMPTS - aiEnhanceAttempts} left)`)"
+          :disabled="isEnhancing || quotaLoading || !project.description.trim() || project.description.trim().length < 10 || (quotaData && quotaData.topic_enhancements && quotaData.topic_enhancements.remaining <= 0)"
+          :title="isEnhancing ? 'Enhancing all 3 titles + description...' : 'Enhance all 3 titles and description with AI'"
         >
           <span class="btn-content">
             <span class="stars">✨</span>
             {{ isEnhancing ? 'Enhancing All...' : 'Enhance with AI' }}
-            <span class="counter">({{ MAX_AI_ATTEMPTS - aiEnhanceAttempts }}/{{ MAX_AI_ATTEMPTS }})</span>
+            <span v-if="quotaData && quotaData.topic_enhancements" class="counter">
+              ({{ quotaData.topic_enhancements.remaining }}/{{ quotaData.topic_enhancements.limit }})
+            </span>
           </span>
         </button>
         
-        <div v-if="!isDean && aiEnhanceAttempts >= MAX_AI_ATTEMPTS" class="limit-warning">
-          ⚠️ AI enhancement limit reached ({{ MAX_AI_ATTEMPTS }}/{{ MAX_AI_ATTEMPTS }})
+        <div v-if="!isDean && quotaData && quotaData.topic_enhancements && quotaData.topic_enhancements.remaining <= 0" class="limit-warning">
+          ⚠️ Daily AI enhancement limit reached ({{ quotaData.topic_enhancements.used }}/{{ quotaData.topic_enhancements.limit }}). Resets at midnight.
         </div>
+        
+        <div v-if="!isDean && !quotaLoading && quotaData && quotaData.topic_enhancements && quotaData.topic_enhancements.remaining > 0" class="quota-info">
+          💡 {{ quotaData.topic_enhancements.remaining }} AI enhancement{{ quotaData.topic_enhancements.remaining !== 1 ? 's' : '' }} remaining today
+        </div>
+
         <div v-if="!isDean">
           <h3 class="skill-title">Choose skills you need:</h3>
           <div class="skills-grid">
@@ -143,8 +150,12 @@ const allSkills = ref([]);
 const selectedSkills = ref([]);
 const projectId = ref(null);
 const isEnhancing = ref(false);
-const aiEnhanceAttempts = ref(0);
-const MAX_AI_ATTEMPTS = 3;
+
+// Backend quota state management
+const quotaData = ref(null);
+const quotaLoading = ref(false);
+const rateLimitError = ref(null);
+
 const getPhoto = (member) => {
   const photo = member.photo || member.user?.photo;
   if (!photo) {
@@ -233,7 +244,31 @@ const removeMember = async () => {
     alert("Failed to remove member.");
   }
 };
-// Загрузка скиллов и если редактируем — загрузка данных проекта
+
+// Fetch user's AI quota from backend
+const fetchQuota = async () => {
+  quotaLoading.value = true;
+  rateLimitError.value = null;
+  
+  try {
+    const response = await axios.get(`${apiConfig.baseURL}/api/ai/quota/`, {
+      headers: { Authorization: `Bearer ${authStore.token}` },
+    });
+    
+    quotaData.value = response.data;
+    console.log('✅ Quota loaded:', quotaData.value);
+  } catch (err) {
+    console.error('❌ Failed to fetch quota:', err);
+    
+    // Handle auth errors
+    if (err.response?.status === 401) {
+      console.error('Authentication failed - redirecting to login');
+      router.push('/login');
+    }
+  } finally {
+    quotaLoading.value = false;
+  }
+};
 
 // Выбор скиллов
 const toggleSkill = (id) => {
@@ -250,12 +285,6 @@ const toggleSkill = (id) => {
 
 // AI Enhancement
 const enhanceDescription = async () => {
-  // Check if user has exceeded the limit
-  if (aiEnhanceAttempts.value >= MAX_AI_ATTEMPTS) {
-    alert(`You have reached the maximum limit of ${MAX_AI_ATTEMPTS} AI enhancement attempts for this session.`);
-    return;
-  }
-
   const trimmedDescription = project.value.description.trim();
   
   // Validate description length
@@ -327,23 +356,68 @@ const enhanceDescription = async () => {
         project.value.description = response.data.enhanced_description;
       }
 
-      aiEnhanceAttempts.value++; // Increment counter on success
+      // Refresh quota from backend after successful enhancement
+      await fetchQuota();
       
-      const remainingAttempts = MAX_AI_ATTEMPTS - aiEnhanceAttempts.value;
-      console.log(`✅ AI enhanced all 3 titles and description! ${remainingAttempts} attempts remaining.`);
+      console.log('✅ AI enhanced all 3 titles and description!');
     } else {
       alert("AI enhancement completed but no response received.");
     }
   } catch (err) {
     console.error("Failed to enhance content", err.response?.data || err);
     
-    // Handle different error types
-    if (err.response?.status === 401) {
+    // Handle 429 Rate Limit errors
+    if (err.response?.status === 429) {
+      const errorData = err.response?.data || {};
+      
+      // Check if it's a daily quota error (has resets_at field)
+      if (errorData.resets_at) {
+        rateLimitError.value = {
+          type: 'quota',
+          message: errorData.detail || `Daily limit reached (${errorData.used}/${errorData.limit}). Resets at midnight.`,
+          resets_at: errorData.resets_at,
+          used: errorData.used,
+          limit: errorData.limit,
+        };
+        
+        // Refresh quota to sync with backend
+        await fetchQuota();
+        
+        alert(rateLimitError.value.message);
+      } 
+      // Otherwise it's a throttle error (has "seconds" in detail)
+      else if (errorData.detail && errorData.detail.includes('seconds')) {
+        const match = errorData.detail.match(/(\d+)\s+seconds?/);
+        const waitSeconds = match ? parseInt(match[1]) : 60;
+        
+        rateLimitError.value = {
+          type: 'throttle',
+          message: errorData.detail,
+          waitSeconds: waitSeconds,
+        };
+        
+        alert(`Please wait ${waitSeconds} seconds before trying again.`);
+      }
+      else {
+        // Generic 429 error
+        rateLimitError.value = {
+          type: 'unknown',
+          message: errorData.detail || 'Rate limit exceeded. Please try again later.',
+        };
+        alert(rateLimitError.value.message);
+      }
+    }
+    // Handle authentication errors
+    else if (err.response?.status === 401) {
       alert("Authentication failed. Please log in again.");
       router.push("/login");
-    } else if (err.response?.data?.error) {
+    } 
+    // Handle validation errors
+    else if (err.response?.status === 400 && err.response?.data?.error) {
       alert(err.response.data.error);
-    } else {
+    }
+    // Handle other errors
+    else {
       alert("Failed to enhance content. Please try again.");
     }
   } finally {
@@ -397,6 +471,9 @@ const submitProject = async () => {
 };
 onMounted(async () => {
   try {
+    // Fetch AI quota first
+    await fetchQuota();
+
     const skillsRes = await axios.get(
       `${apiConfig.baseURL}/api/profiles/skills/`,
       {
@@ -545,6 +622,18 @@ h2 {
   background: #fff3cd;
   border: 1px solid #ffc107;
   color: #856404;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.quota-info {
+  background: #d1ecf1;
+  border: 1px solid #bee5eb;
+  color: #0c5460;
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 13px;
